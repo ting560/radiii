@@ -12,6 +12,16 @@
     audioPlayer.style.cssText = "position:fixed;left:-9999px;width:1px;height:1px;opacity:0.01";
     document.body.appendChild(audioPlayer);
 
+    audioPlayer.addEventListener('error', function () {
+        isPlaying = false;
+        document.getElementById('iconPlay').className = 'fas fa-play';
+        showToast('Erro ao reproduzir a r\u00e1dio. Verifique a conex\u00e3o.');
+    });
+
+    audioPlayer.addEventListener('waiting', function () {
+        if (isPlaying) showToast('Carregando transmiss\u00e3o...');
+    });
+
     let newsItems = [];
     let weatherData = null;
     let currentSong = "";
@@ -27,6 +37,7 @@
     let visualizerReady = false;
     let showOpenOnly = false;
     let lastVolume = 0.8;
+    let dataUpdateInterval = null;
 
     const topHeader = document.getElementById('topHeader');
     const fixedPlayer = document.getElementById('fixedPlayer');
@@ -167,23 +178,57 @@
         return div.innerHTML;
     }
 
-    // GET SONG - Shoutcast 7.html direto + API fallback
+    // GET SONG + NEWS - via data.json (gerado por GitHub Actions, sem CORS)
+    var DATA_URL = "data.json";
     var SHOUTCAST_STATUS_URL = "https://stm37.srvstm.com:6888/7.html";
 
-    function fetchCurrentSong() {
-        fetchCurrentSongInternal().catch(function (error) {
-            console.error("Erro ao buscar m\u00fasica:", error);
-            if (!currentSong) {
-                document.getElementById('songTitle').textContent = "Ao Vivo";
-                document.getElementById('songArtist').textContent = "R\u00e1dio Positiva FM";
+    function applySong(musicaAtual) {
+        currentSong = musicaAtual;
+        var artist = "R\u00e1dio Positiva";
+        var title = musicaAtual;
+        var separators = [' - ', ' \u2013 ', '-', '\u2013', ' | ', '|', ' by '];
+        for (var s = 0; s < separators.length; s++) {
+            var sep = separators[s];
+            if (musicaAtual.indexOf(sep) !== -1) {
+                var parts = musicaAtual.split(sep);
+                if (parts.length >= 2) {
+                    artist = parts[0].trim();
+                    title = parts.slice(1).join(sep).trim();
+                    break;
+                }
             }
-        });
+        }
+        document.getElementById('songTitle').textContent = title;
+        document.getElementById('songArtist').textContent = artist;
+        addToHistory(artist, title);
     }
 
-    async function fetchCurrentSongInternal() {
-        var musicaAtual = "";
+    async function fetchRadioData() {
+        try {
+            var res = await fetch(DATA_URL + '?_=' + Date.now());
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            var data = await res.json();
+            if (data.song && typeof data.song === 'string' && data.song.trim() !== '' && data.song !== currentSong) {
+                applySong(data.song);
+            }
+            if (data.news && Array.isArray(data.news) && data.news.length > 0) {
+                newsItems = data.news;
+                renderNewsTicker();
+                renderCarousel();
+            }
+        } catch (e) {
+            console.warn('data.json indispon\u00edvel, usando fallback direto:', e);
+            fetchCurrentSongFallback();
+            fetchRSSNewsFallback();
+        }
+    }
 
-        // 1) Try Shoutcast /7.html
+    function fetchCurrentSong() {
+        fetchRadioData();
+    }
+
+    async function fetchCurrentSongFallback() {
+        var musicaAtual = "";
         try {
             var scRes = await fetch(SHOUTCAST_STATUS_URL + '?_=' + Date.now(), { mode: 'cors' });
             if (scRes.ok) {
@@ -204,7 +249,6 @@
             console.warn("Shoutcast /7.html indispon\u00edvel, usando API fallback");
         }
 
-        // 2) Fallback via API
         if (!musicaAtual) {
             try {
                 var urlWithCache = API_URL + '?_=' + Date.now();
@@ -223,32 +267,11 @@
             }
         }
 
-        if (musicaAtual && typeof musicaAtual === 'string' && musicaAtual.trim() !== '') {
-            if (musicaAtual !== currentSong) {
-                currentSong = musicaAtual;
-                var artist = "R\u00e1dio Positiva";
-                var title = musicaAtual;
-                var separators = [' - ', ' \u2013 ', '-', '\u2013', ' | ', '|', ' by '];
-                for (var s = 0; s < separators.length; s++) {
-                    var sep = separators[s];
-                    if (musicaAtual.indexOf(sep) !== -1) {
-                        var parts = musicaAtual.split(sep);
-                        if (parts.length >= 2) {
-                            artist = parts[0].trim();
-                            title = parts.slice(1).join(sep).trim();
-                            break;
-                        }
-                    }
-                }
-                document.getElementById('songTitle').textContent = title;
-                document.getElementById('songArtist').textContent = artist;
-                addToHistory(artist, title);
-            }
-        } else {
-            if (!currentSong) {
-                document.getElementById('songTitle').textContent = "Ao Vivo";
-                document.getElementById('songArtist').textContent = "R\u00e1dio Positiva FM";
-            }
+        if (musicaAtual && typeof musicaAtual === 'string' && musicaAtual.trim() !== '' && musicaAtual !== currentSong) {
+            applySong(musicaAtual);
+        } else if (!currentSong) {
+            document.getElementById('songTitle').textContent = "Ao Vivo";
+            document.getElementById('songArtist').textContent = "R\u00e1dio Positiva FM";
         }
     }
 
@@ -292,27 +315,33 @@
         document.getElementById('weatherModal').classList.remove('open');
     }
 
-    // RSS NEWS
-    async function fetchRSSNews() {
+    // NEWS
+    function renderNewsTicker() {
+        var ticker = document.getElementById('newsTickerContent');
+        if (!newsItems || newsItems.length === 0) {
+            ticker.innerHTML = '<span class="ticker-item" style="color:#888">Not\u00edcias indispon\u00edveis no momento</span><span class="ticker-item" style="color:#888">Not\u00edcias indispon\u00edveis no momento</span>';
+            return;
+        }
+        var html = '';
+        for (var idx = 0; idx < newsItems.length; idx++) {
+            html += '<span class="ticker-item" data-news-idx="' + idx + '"><strong>' + (idx + 1) + '.</strong> ' + escapeHtml(newsItems[idx].title) + '</span>';
+        }
+        ticker.textContent = '';
+        ticker.innerHTML = html + html;
+    }
+
+    async function fetchRSSNewsFallback() {
         try {
             var res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(RSS_URL));
             var data = await res.json();
             if (data.status === 'ok') {
                 newsItems = data.items.slice(0, 10);
-                var html = '';
-                for (var idx = 0; idx < newsItems.length; idx++) {
-                    html += '<span class="ticker-item" data-news-idx="' + idx + '"><strong>' + (idx + 1) + '.</strong> ' + escapeHtml(newsItems[idx].title) + '</span>';
-                }
-                document.getElementById('newsTickerContent').textContent = '';
-                document.getElementById('newsTickerContent').innerHTML = html + html;
+                renderNewsTicker();
                 renderCarousel();
             }
         } catch (e) {
-            console.error('Erro ao buscar not\u00edcias RSS:', e);
-            var ticker = document.getElementById('newsTickerContent');
-            if (ticker.textContent === 'Carregando...') {
-                ticker.innerHTML = '<span class="ticker-item" style="color:#888">Not\u00edcias indispon\u00edveis no momento</span><span class="ticker-item" style="color:#888">Not\u00edcias indispon\u00edveis no momento</span>';
-            }
+            console.error('Erro ao buscar not\u00edcias:', e);
+            renderNewsTicker();
         }
     }
 
@@ -351,7 +380,7 @@
         track.innerHTML = '';
         for (var idx = 0; idx < newsItems.length; idx++) {
             var item = newsItems[idx];
-            var imgUrl = item.thumbnail || (item.enclosure && item.enclosure.link) || extractFirstImage(item.description) || extractFirstImage(item.content) || PLACEHOLDER_IMG;
+            var imgUrl = item.image || item.thumbnail || (item.enclosure && item.enclosure.link) || extractFirstImage(item.description) || PLACEHOLDER_IMG;
             var safeTitle = escapeHtml(item.title);
             var cleanDesc = item.description ? item.description.replace(/<[^>]*>?/gm, '').substring(0, 100) : '';
             var safeDesc = escapeHtml(cleanDesc);
@@ -436,6 +465,14 @@
 
     function togglePlay() {
         triggerRipple();
+        // Se está tocando mudo (autoplay), apenas ativa o som
+        if (!audioPlayer.paused && audioPlayer.muted) {
+            audioPlayer.muted = false;
+            document.getElementById('btnMute').querySelector('i').className = 'fas fa-volume-up';
+            document.getElementById('volumeSlider').value = lastVolume;
+            showToast('\u00c1udio ativado!');
+            return;
+        }
         if (audioPlayer.paused) {
             audioPlayer.muted = false;
             audioPlayer.src = STREAM_URL + '?t=' + Date.now();
@@ -444,9 +481,9 @@
                 isPlaying = true;
                 initAudioVisualizer();
                 document.getElementById('iconPlay').className = 'fas fa-pause';
-                fetchCurrentSong();
-                if (!songUpdateInterval) {
-                    songUpdateInterval = setInterval(fetchCurrentSong, 5000);
+                fetchRadioData();
+                if (!dataUpdateInterval) {
+                    dataUpdateInterval = setInterval(fetchRadioData, 60000);
                 }
             }).catch(function () {
                 showToast('Erro ao conectar com a r\u00e1dio. Tente novamente.');
@@ -838,22 +875,35 @@
 
         // Fetch data
         fetchWeather();
-        fetchRSSNews();
+        fetchRadioData();
         setInterval(fetchWeather, 600000);
+        if (!dataUpdateInterval) {
+            dataUpdateInterval = setInterval(fetchRadioData, 60000);
+        }
 
-        // Autoplay: começa mudo e desmuda após sucesso (padrão comum)
+        // Autoplay: começa mudo e tenta desmutar (pode ser bloqueado pelo navegador)
         audioPlayer.muted = true;
         audioPlayer.src = STREAM_URL + '?t=' + Date.now();
         audioPlayer.load();
         audioPlayer.play().then(function () {
-            audioPlayer.muted = false;
             isPlaying = true;
             document.getElementById('iconPlay').className = 'fas fa-pause';
-            fetchCurrentSong();
-            if (!songUpdateInterval) {
-                songUpdateInterval = setInterval(fetchCurrentSong, 5000);
+            fetchRadioData();
+            if (!dataUpdateInterval) {
+                dataUpdateInterval = setInterval(fetchRadioData, 60000);
             }
             initAudioVisualizer();
+            // Tenta ativar o som; se o navegador bloquear, avisa o usuário
+            setTimeout(function () {
+                try {
+                    audioPlayer.muted = false;
+                    if (audioPlayer.muted) {
+                        showToast('Clique em ▶ para ativar o som');
+                    }
+                } catch (e) {
+                    showToast('Clique em ▶ para ativar o som');
+                }
+            }, 0);
         }).catch(function () {
             var playHandler = function () {
                 document.removeEventListener('click', playHandler);

@@ -1,0 +1,38 @@
+name: Atualizar dados da radio
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Gerar data.json
+        run: node update-data.mjs
+
+      - name: Commitar se houver mudancas
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data.json
+          git diff --cached --quiet && echo "Sem mudancas" || {
+            git commit -m "atualiza dados da radio: $(git diff --cached --name-only)"
+            git push origin main
+          }
