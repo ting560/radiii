@@ -19,7 +19,10 @@
     });
 
     audioPlayer.addEventListener('waiting', function () {
-        if (isPlaying) showToast('Carregando transmiss\u00e3o...');
+        if (isPlaying && Date.now() - lastWaitingToast > 5000) {
+            lastWaitingToast = Date.now();
+            showToast('Carregando transmiss\u00e3o...');
+        }
     });
 
     let newsItems = [];
@@ -38,6 +41,7 @@
     let showOpenOnly = false;
     let lastVolume = 0.8;
     let dataUpdateInterval = null;
+    let lastWaitingToast = 0;
 
     const topHeader = document.getElementById('topHeader');
     const fixedPlayer = document.getElementById('fixedPlayer');
@@ -487,6 +491,10 @@
                 }
             }).catch(function (err) {
                 if (err && err.name === 'AbortError') return;
+                if (err && err.name === 'NotAllowedError') {
+                    showToast('Clique em ▶ para reproduzir a r\u00e1dio');
+                    return;
+                }
                 showToast('Erro ao conectar com a r\u00e1dio. Tente novamente.');
             });
         } else {
@@ -502,11 +510,14 @@
 
     // VOLUME / MUTE
     function handleVolume(e) {
-        audioPlayer.volume = parseFloat(e.target.value);
+        var vol = parseFloat(e.target.value);
+        audioPlayer.volume = vol;
         var icon = document.getElementById('btnMute').querySelector('i');
-        if (audioPlayer.volume === 0) {
+        if (vol === 0) {
+            audioPlayer.muted = false;
             icon.className = 'fas fa-volume-mute';
         } else {
+            if (audioPlayer.muted) audioPlayer.muted = false;
             icon.className = 'fas fa-volume-up';
         }
     }
@@ -520,6 +531,7 @@
             icon.className = 'fas fa-volume-mute';
         } else {
             audioPlayer.volume = lastVolume;
+            audioPlayer.muted = false;
             document.getElementById('volumeSlider').value = lastVolume;
             icon.className = 'fas fa-volume-up';
         }
@@ -882,8 +894,12 @@
             dataUpdateInterval = setInterval(fetchRadioData, 60000);
         }
 
+        // Sincroniza o volume do player com o slider
+        audioPlayer.volume = lastVolume;
+
         // Autoplay: começa mudo (permitido pelo navegador) e pede um clique para ativar o som
         audioPlayer.muted = true;
+        document.getElementById('btnMute').querySelector('i').className = 'fas fa-volume-mute';
         audioPlayer.src = STREAM_URL + '?t=' + Date.now();
         audioPlayer.load();
         audioPlayer.play().then(function () {
