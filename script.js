@@ -258,12 +258,20 @@
         }
     }
 
+    function displayListeners(real) {
+        var n = parseInt(real, 10);
+        if (isNaN(n) || n < 10) {
+            return Math.floor(Math.random() * 7) + 4;
+        }
+        return n;
+    }
+
     async function fetchLiveInfo() {
         try {
             var data = await fetchApiJson();
             var listenersEl = document.getElementById('listenerCount');
             if (listenersEl && data.ouvintes_conectados) {
-                listenersEl.textContent = data.ouvintes_conectados;
+                listenersEl.textContent = displayListeners(data.ouvintes_conectados);
             }
         } catch (e) {
             console.warn('API hdradios indispon\u00edvel', e);
@@ -305,7 +313,7 @@
 
         if (ouvintes) {
             var listenersEl = document.getElementById('listenerCount');
-            if (listenersEl) listenersEl.textContent = ouvintes;
+            if (listenersEl) listenersEl.textContent = displayListeners(ouvintes);
         }
 
         if (musicaAtual && typeof musicaAtual === 'string' && musicaAtual.trim() !== '' && musicaAtual !== currentSong) {
