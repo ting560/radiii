@@ -2,7 +2,7 @@
     'use strict';
 
     const STREAM_URL = "https://sv15.hdradios.net:8914/stream";
-    const API_URL = "https://radiovox.conectastm.com/api-json/TmpnNE9BPT0rRA==";
+    const API_URL = "https://painel.hdradios.net/api-json/VkRCU2NtVkZOVUpRVkRBOStS";
     const RSS_URL = "https://news.google.com/rss/search?q=Angra+dos+Reis&hl=pt-BR&gl=BR&ceid=BR:pt-BR";
     const PLACEHOLDER_IMG = 'https://z-cdn-media.chatglm.cn/files/eb57e8a7-8c37-4c67-9360-a6955a9a7495.png?auth_key=1872979742-b9c0fa04281e42cd9758535b515671cb-0-24c3f66193992b40a4ff51135bf319a4';
 
@@ -215,6 +215,17 @@
             if (data.song && typeof data.song === 'string' && data.song.trim() !== '' && data.song !== currentSong) {
                 applySong(data.song);
             }
+            if (data.listeners) {
+                var listenersEl = document.getElementById('listenerCount');
+                if (listenersEl) listenersEl.textContent = data.listeners;
+            }
+            if (data.cover) {
+                var coverEl = document.getElementById('albumCover');
+                if (coverEl) {
+                    coverEl.src = data.cover;
+                    coverEl.style.display = 'block';
+                }
+            }
             if (data.news && Array.isArray(data.news) && data.news.length > 0) {
                 newsItems = data.news;
                 renderNewsTicker();
@@ -233,41 +244,51 @@
 
     async function fetchCurrentSongFallback() {
         var musicaAtual = "";
+        var ouvintes = "";
+        var capa = "";
         try {
-            var scRes = await fetch(SHOUTCAST_STATUS_URL + '?_=' + Date.now(), { mode: 'cors' });
-            if (scRes.ok) {
-                var scBuffer = await scRes.arrayBuffer();
-                var scText = new TextDecoder('utf-8').decode(scBuffer);
-                if (scText.indexOf('\uFFFD') !== -1) {
-                    scText = new TextDecoder('iso-8859-1').decode(scBuffer);
-                }
-                var bodyMatch = scText.match(/<body>(.*?)<\/body>/i);
-                if (bodyMatch) {
-                    var parts = bodyMatch[1].split(',');
-                    if (parts.length >= 7) {
-                        musicaAtual = parts.slice(6).join(',').trim();
-                    }
-                }
+            var apiRes = await fetch(API_URL + '?_=' + Date.now(), { method: 'GET', headers: { 'Accept': 'application/json' }, mode: 'cors' });
+            if (apiRes.ok) {
+                var apiData = await apiRes.json();
+                musicaAtual = apiData.musica_atual || apiData.musica || apiData.currentSong || apiData.song || apiData.title || "";
+                ouvintes = apiData.ouvintes_conectados || "";
+                capa = apiData.capa_musica || "";
             }
         } catch (e) {
-            console.warn("Shoutcast /7.html indispon\u00edvel, usando API fallback");
+            console.warn("API hdradios indispon\u00edvel, tentando Shoutcast /7.html");
         }
 
         if (!musicaAtual) {
             try {
-                var urlWithCache = API_URL + '?_=' + Date.now();
-                var response = await fetch(urlWithCache, { method: 'GET', headers: { 'Accept': 'application/json' }, mode: 'cors' });
-                if (response.ok) {
-                    var buffer = await response.arrayBuffer();
-                    var text = new TextDecoder('utf-8').decode(buffer);
-                    if (text.indexOf('\uFFFD') !== -1) {
-                        text = new TextDecoder('iso-8859-1').decode(buffer);
+                var scRes = await fetch(SHOUTCAST_STATUS_URL + '?_=' + Date.now(), { mode: 'cors' });
+                if (scRes.ok) {
+                    var scBuffer = await scRes.arrayBuffer();
+                    var scText = new TextDecoder('utf-8').decode(scBuffer);
+                    if (scText.indexOf('\uFFFD') !== -1) {
+                        scText = new TextDecoder('iso-8859-1').decode(scBuffer);
                     }
-                    var data = JSON.parse(text);
-                    musicaAtual = data.musica_atual || data.musica || data.currentSong || data.song || data.title || "";
+                    var bodyMatch = scText.match(/<body>(.*?)<\/body>/i);
+                    if (bodyMatch) {
+                        var parts = bodyMatch[1].split(',');
+                        if (parts.length >= 7) {
+                            musicaAtual = parts.slice(6).join(',').trim();
+                        }
+                    }
                 }
             } catch (e) {
-                console.warn("API fallback tamb\u00e9m falhou");
+                console.warn("Shoutcast /7.html indispon\u00edvel");
+            }
+        }
+
+        if (ouvintes) {
+            var listenersEl = document.getElementById('listenerCount');
+            if (listenersEl) listenersEl.textContent = ouvintes;
+        }
+        if (capa) {
+            var coverEl = document.getElementById('albumCover');
+            if (coverEl) {
+                coverEl.src = capa;
+                coverEl.style.display = 'block';
             }
         }
 

@@ -1,6 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 
 const STATUS_URL = 'https://sv15.hdradios.net:8914/7.html';
+const API_URL = 'https://painel.hdradios.net/api-json/VkRCU2NtVkZOVUpRVkRBOStS';
 const RSS_URL = 'https://news.google.com/rss/search?q=Angra+dos+Reis&hl=pt-BR&gl=BR&ceid=BR:pt-BR';
 const DATA_FILE = 'data.json';
 
@@ -32,19 +33,34 @@ function extractImage(html) {
     return m ? m[1] : '';
 }
 
-async function getSong() {
+async function getRadioInfo() {
+    try {
+        const res = await fetch(API_URL, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+        const data = await res.json();
+        return {
+            song: typeof data.musica_atual === 'string' && data.musica_atual.trim() ? decodeEntities(data.musica_atual.trim()) : '',
+            listeners: data.ouvintes_conectados || '',
+            cover: data.capa_musica || '',
+            next: (data.proxima_musica && typeof data.proxima_musica === 'object' && !Array.isArray(data.proxima_musica) && data.proxima_musica.title) ? data.proxima_musica.title : ''
+        };
+    } catch (e) {
+        console.error('Falha ao buscar API:', e.message);
+    }
     try {
         const res = await fetch(STATUS_URL, { headers: { 'User-Agent': 'Mozilla/5.0' } });
         const text = await res.text();
         const body = text.match(/<body>(.*?)<\/body>/i);
         if (body) {
             const parts = body[1].split(',');
-            if (parts.length >= 7) return decodeEntities(parts.slice(6).join(',').trim());
+            if (parts.length >= 7) {
+                const song = decodeEntities(parts.slice(6).join(',').trim());
+                return { song, listeners: '', cover: '', next: '' };
+            }
         }
     } catch (e) {
-        console.error('Falha ao buscar musica:', e.message);
+        console.error('Falha ao buscar musica (7.html):', e.message);
     }
-    return '';
+    return { song: '', listeners: '', cover: '', next: '' };
 }
 
 async function getNews() {
@@ -80,12 +96,16 @@ async function main() {
         old = JSON.parse(await readFile(DATA_FILE, 'utf-8'));
     } catch (e) { /* arquivo ainda nao existe */ }
 
-    const song = await getSong() || old.song || '';
+    const info = await getRadioInfo();
+    const song = info.song || old.song || '';
     const news = (await getNews()).length > 0 ? await getNews() : old.news;
 
     const data = {
         updated_at: new Date().toISOString(),
         song,
+        listeners: info.listeners || old.listeners || '',
+        cover: info.cover || old.cover || '',
+        next: info.next || old.next || '',
         news
     };
 
