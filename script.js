@@ -780,28 +780,28 @@
             { h: '12:00', p: 'SELE\u00c7\u00c3O BRASIL', a: 'Cristiano Ferreira' },
             { h: '13:00', p: 'SAPECANDO NO FORR\u00d3', a: 'SANDRO SANTOS' },
             { h: '18:00', p: 'PARAD\u00c3O SERTANEJO', a: 'ZARETA' },
-            { h: '20:00', p: 'SACOLEJO', a: 'ZARETA' },
-            { h: '22:00', p: 'ESTA\u00c7\u00c3O 10', a: 'ZARETA' }
+            { h: '20:00', p: 'SACOLEJO', a: 'ZARETA' }
         ],
         sab: [
-            { h: '06:00', p: 'MANH\u00c3 POSITIVA', a: 'Viny Gomes' },
-            { h: '08:00', p: 'BOM DIA, POSITIVA', a: 'ZARETA' },
-            { h: '10:00', p: 'PAINEL DE CONTROLE', a: 'Cristiano Ferreira' },
-            { h: '12:00', p: 'SELE\u00c7\u00c3O BRASIL', a: 'Cristiano Ferreira' },
-            { h: '13:00', p: 'SAPECANDO NO FORR\u00d3', a: 'SANDRO SANTOS' },
-            { h: '18:00', p: 'PARAD\u00c3O SERTANEJO', a: 'ZARETA' },
-            { h: '20:00', p: 'SACOLEJO', a: 'ZARETA' },
-            { h: '22:00', p: 'ESTA\u00c7\u00c3O 10', a: 'ZARETA' }
+            { h: '05:30', p: 'Sert\u00e3o na Cidade', a: 'Aderbal Teixeira' },
+            { h: '08:00', p: 'ESPECIAL ROBERTO CARLOS', a: 'Viny Gomes' },
+            { h: '09:00', p: 'SABAD\u00c3O SHOW', a: 'Marco Aur\u00e9lio' },
+            { h: '10:00', p: 'PAINEL DE CONTROLE', a: '' },
+            { h: '13:00', p: 'PROGRAMA\u00c7\u00c3O NORMAL', a: '' },
+            { h: '14:00', p: 'TARDE TOTAL', a: '' },
+            { h: '16:00', p: 'ENERGIA POSITIVA', a: '' },
+            { h: '18:00', p: 'VERS\u00d5ES AO VIVO', a: 'Zareta' },
+            { h: '20:00', p: 'FOLIA POSITIVA', a: 'Zareta' }
         ],
         dom: [
-            { h: '06:00', p: 'MANH\u00c3 POSITIVA', a: 'Viny Gomes' },
-            { h: '08:00', p: 'BOM DIA, POSITIVA', a: 'ZARETA' },
-            { h: '10:00', p: 'PAINEL DE CONTROLE', a: 'Cristiano Ferreira' },
-            { h: '12:00', p: 'SELE\u00c7\u00c3O BRASIL', a: 'Cristiano Ferreira' },
-            { h: '13:00', p: 'SAPECANDO NO FORR\u00d3', a: 'SANDRO SANTOS' },
-            { h: '18:00', p: 'PARAD\u00c3O SERTANEJO', a: 'ZARETA' },
-            { h: '20:00', p: 'SACOLEJO', a: 'ZARETA' },
-            { h: '22:00', p: 'ESTA\u00c7\u00c3O 10', a: 'ZARETA' }
+            { h: '06:00', p: 'SELE\u00c7\u00c3O BRASIL', a: 'ZARETA' },
+            { h: '08:00', p: 'CLUBE DO CHORO POSITIVA', a: 'ZARETA' },
+            { h: '09:00', p: 'SACOLEJO', a: 'ZARETA' },
+            { h: '13:00', p: 'BATID\u00c3O', a: '' },
+            { h: '15:00', p: 'PARAD\u00c3O SERTANEJO', a: '' },
+            { h: '17:00', p: 'ROCK OVERDRIVE', a: 'Zareta Jr' },
+            { h: '19:00', p: 'CLUBE DO CHORO POSITIVA', a: 'Zareta' },
+            { h: '21:00', p: 'PROGRAMA\u00c7\u00c3O NORMAL', a: '' }
         ]
     };
 
