@@ -805,13 +805,27 @@
         ]
     };
 
+    var currentScheduleDay = 'seg';
+
+    function getTodayKey() {
+        var dayMap = { 0: 'dom', 1: 'seg', 2: 'ter', 3: 'qua', 4: 'qui', 5: 'sex', 6: 'sab' };
+        return dayMap[new Date().getDay()];
+    }
+
     function renderSchedule(day) {
         var data = scheduleData[day] || [];
+        var now = new Date();
+        var currentMin = now.getHours() * 60 + now.getMinutes();
         var html = '<table style="width:100%;border-collapse:collapse"><thead><tr style="border-bottom:1px solid var(--glass-border);color:var(--primary-color)"><th style="padding:8px;text-align:left">Hor\u00e1rio</th><th style="padding:8px;text-align:left">Programa</th><th style="padding:8px;text-align:left">Apresentador</th></tr></thead><tbody>';
         for (var i = 0; i < data.length; i++) {
             var row = data[i];
             var border = i < data.length - 1 ? 'border-bottom:1px solid rgba(255,255,255,0.05)' : '';
-            html += '<tr style="' + border + '"><td style="padding:8px;color:var(--secondary-color);font-weight:700">' + escapeHtml(row.h) + '</td><td style="padding:8px">' + escapeHtml(row.p) + '</td><td style="padding:8px;color:#aaa">' + escapeHtml(row.a || '-') + '</td></tr>';
+            var parts = row.h.split(':');
+            var startMin = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+            var endMin = i < data.length - 1 ? (parseInt(data[i + 1].h.split(':')[0], 10) * 60 + parseInt(data[i + 1].h.split(':')[1], 10)) : 1440;
+            var isNow = currentMin >= startMin && currentMin < endMin;
+            var cls = isNow ? ' class="sch-now"' : '';
+            html += '<tr' + cls + ' style="' + border + '"><td style="padding:8px;color:var(--secondary-color);font-weight:700">' + escapeHtml(row.h) + '</td><td style="padding:8px">' + escapeHtml(row.p) + '</td><td style="padding:8px;color:#aaa">' + escapeHtml(row.a || '-') + '</td></tr>';
         }
         html += '</tbody></table>';
         document.getElementById('scheduleContent').innerHTML = html;
@@ -856,7 +870,8 @@
                 allTabs[i].classList.remove('active');
             }
             btn.classList.add('active');
-            renderSchedule(btn.getAttribute('data-day'));
+            currentScheduleDay = btn.getAttribute('data-day');
+            renderSchedule(currentScheduleDay);
         });
 
         // Weather
@@ -922,9 +937,17 @@
         });
 
         // Initial renders
-        renderSchedule('seg');
+        currentScheduleDay = getTodayKey();
+        var tabs = document.querySelectorAll('.sch-tab');
+        for (var t = 0; t < tabs.length; t++) {
+            tabs[t].classList.toggle('active', tabs[t].getAttribute('data-day') === currentScheduleDay);
+        }
+        renderSchedule(currentScheduleDay);
         updateOnAir();
         setInterval(updateOnAir, 60000);
+        setInterval(function () {
+            renderSchedule(currentScheduleDay);
+        }, 60000);
         renderPharmacies();
         setInterval(renderPharmacies, 60000);
 

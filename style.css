@@ -1327,6 +1327,15 @@ input[type=range]::-webkit-slider-runnable-track {
     font-weight: 700
 }
 
+tr.sch-now td {
+    background: rgba(0, 200, 81, 0.12)
+}
+
+tr.sch-now td:first-child {
+    border-left: 3px solid var(--primary-color);
+    color: var(--primary-color) !important
+}
+
 .onair-badge {
     display: inline-block;
     background: rgba(0, 200, 81, 0.15);
