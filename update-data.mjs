@@ -1,6 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises';
 
-const STATUS_URL = 'https://stm37.srvstm.com:6888/7.html';
+const STATUS_URL = 'https://sv15.hdradios.net:8914/7.html';
 const RSS_URL = 'https://news.google.com/rss/search?q=Angra+dos+Reis&hl=pt-BR&gl=BR&ceid=BR:pt-BR';
 const DATA_FILE = 'data.json';
 
@@ -39,7 +39,7 @@ async function getSong() {
         const body = text.match(/<body>(.*?)<\/body>/i);
         if (body) {
             const parts = body[1].split(',');
-            if (parts.length >= 7) return parts.slice(6).join(',').trim();
+            if (parts.length >= 7) return decodeEntities(parts.slice(6).join(',').trim());
         }
     } catch (e) {
         console.error('Falha ao buscar musica:', e.message);

@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    const STREAM_URL = "https://stm37.srvstm.com:6888/stream";
+    const STREAM_URL = "https://sv15.hdradios.net:8914/stream";
     const API_URL = "https://radiovox.conectastm.com/api-json/TmpnNE9BPT0rRA==";
     const RSS_URL = "https://news.google.com/rss/search?q=Angra+dos+Reis&hl=pt-BR&gl=BR&ceid=BR:pt-BR";
     const PLACEHOLDER_IMG = 'https://z-cdn-media.chatglm.cn/files/eb57e8a7-8c37-4c67-9360-a6955a9a7495.png?auth_key=1872979742-b9c0fa04281e42cd9758535b515671cb-0-24c3f66193992b40a4ff51135bf319a4';
@@ -180,7 +180,7 @@
 
     // GET SONG + NEWS - via data.json (gerado por GitHub Actions, sem CORS)
     var DATA_URL = "data.json";
-    var SHOUTCAST_STATUS_URL = "https://stm37.srvstm.com:6888/7.html";
+    var SHOUTCAST_STATUS_URL = "https://sv15.hdradios.net:8914/7.html";
 
     function applySong(musicaAtual) {
         currentSong = musicaAtual;
@@ -485,7 +485,8 @@
                 if (!dataUpdateInterval) {
                     dataUpdateInterval = setInterval(fetchRadioData, 60000);
                 }
-            }).catch(function () {
+            }).catch(function (err) {
+                if (err && err.name === 'AbortError') return;
                 showToast('Erro ao conectar com a r\u00e1dio. Tente novamente.');
             });
         } else {
@@ -881,7 +882,7 @@
             dataUpdateInterval = setInterval(fetchRadioData, 60000);
         }
 
-        // Autoplay: começa mudo e tenta desmutar (pode ser bloqueado pelo navegador)
+        // Autoplay: começa mudo (permitido pelo navegador) e pede um clique para ativar o som
         audioPlayer.muted = true;
         audioPlayer.src = STREAM_URL + '?t=' + Date.now();
         audioPlayer.load();
@@ -893,25 +894,10 @@
                 dataUpdateInterval = setInterval(fetchRadioData, 60000);
             }
             initAudioVisualizer();
-            // Tenta ativar o som; se o navegador bloquear, avisa o usuário
-            setTimeout(function () {
-                try {
-                    audioPlayer.muted = false;
-                    if (audioPlayer.muted) {
-                        showToast('Clique em ▶ para ativar o som');
-                    }
-                } catch (e) {
-                    showToast('Clique em ▶ para ativar o som');
-                }
-            }, 0);
+            showToast('Clique em ▶ para ativar o som');
         }).catch(function () {
-            var playHandler = function () {
-                document.removeEventListener('click', playHandler);
-                document.removeEventListener('touchstart', playHandler);
-                togglePlay();
-            };
-            document.addEventListener('click', playHandler);
-            document.addEventListener('touchstart', playHandler);
+            isPlaying = false;
+            document.getElementById('iconPlay').className = 'fas fa-play';
         });
     }
 
