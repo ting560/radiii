@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-08-02T14:27:52.719Z",
-  "song": "Grupo Vou Zuar - Deixa A Gente Amar",
+  "updated_at": "2026-08-02T14:37:20.240Z",
+  "song": "Grupo Molejo - Que Nem Iô Iô",
   "listeners": "1",
   "cover": "https://player.hdradios.net/img/img-capa-artista-padrao.png",
   "next": "",
@@ -18,9 +18,15 @@
       "image": ""
     },
     {
-      "title": "5º Simpósio de Emergência Nuclear tem participação da Prefeitura de Angra dos Reis - A Voz da Cidade",
+      "title": "Vacinação contra a gripe é ampliada para toda a população em Angra dos Reis - Prefeitura de Angra dos Reis",
+      "link": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxQTnlwOGJzWUlYWmtCUkFhV2NTeEFFVjFOeXFtNktHZE5xQlo5alR5NHM2S1ljeFNlTW9QVUxiN1FNTDlCcnc3b1NOQUsxalp1Z2FwZ2ZCMG52eVpleUtrNV9SY2ZaUUdaZ0x0Ry1TVE5SaU5WdzBzbWdRTHBac3VrS1BpazJZQ0VGLW1mZzZDRFZFN0VQWmVFRXRjcnM0RUJWOFU2SWxkNjluM1B4UTNWYTF2cXZoMV9qQXg2ZW1WZWI?oc=5",
+      "description": "Vacinação contra a gripe é ampliada para toda a população em Angra dos Reis Prefeitura de Angra dos Reis",
+      "image": ""
+    },
+    {
+      "title": "5º Simpósio de Emergência Nuclear tem participação da Prefeitura de Angra dos Reis - avozdacidade.com",
       "link": "https://news.google.com/rss/articles/CBMisAFBVV95cUxQWFNfZGZZdzlkM0NPYjNlaHU1WHZyd0dVMnlXdGZ3Q0lVXzV3Q0pYZVB6SlFpR2lHeGd1RHFBbjFJY1FpZ1JkcUhPVU40bDJhOHJNT2xHbFpNc2dPTFpFMVo0N3pLQUFSSDdyVjZacWpSQWJ1a2tqZ0N1MG53Q2Z5VVpJMDJ3MjJydS1TcDRGOVpxdXdoZTg0U1dtd1czbzBia29pVDgzVUY0OVFsRzg4Sg?oc=5",
-      "description": "5º Simpósio de Emergência Nuclear tem participação da Prefeitura de Angra dos Reis A Voz da Cidade",
+      "description": "5º Simpósio de Emergência Nuclear tem participação da Prefeitura de Angra dos Reis avozdacidade.com",
       "image": ""
     },
     {
@@ -57,12 +63,6 @@
       "title": "Vendaval de mais de 100 km/h assusta moradores de Angra dos Reis e Paraty - G1",
       "link": "https://news.google.com/rss/articles/CBMi9AFBVV95cUxPVlRfakZsY25lSmZKVEhhS3RWZ0U1andkVU40czR4ZXNjcmUzWE1WMUhPdjBaUkt2d00zc0YteGNHMEJLMVJtYmhuaFdTX2c0bWJ2TlBRaFlPdWg4LUVLbmhndjY2OHpuV2pmOWU0eWo1WEp5d2lHUjJYdldRdkJ3ekVqZHpvMFRRV2NHYWhpQmtOQ09sN3c3SXFLdzU5SmN5RUwwWTc0S3l0d0N5QkJiakNya0dJd3VEVXlpSUFqMldfcDlsWlN5cUc5R1ZkdkVJMnRWMThKSEFycll1TTFDQkJVc3F3WTU2WU1vbWlUNVBfWU1j0gGDAkFVX3lxTE9QSjRSZWpTWlhycVFsQ3JtZFhBMC12RTlWZ2tQM09zVE5kYjRHalVCYWQtLWd5RlRfY2p4cXk3TVVjWjlXNFAtSTZQSEdNMnluVnctZ2dwQTdWUFZFbkRDTVB0WTZ5VmRZeXY1TFlTVXhleVFQVGlBaTJ4UjJKa1JKUXJZeWtFUFA0RDlFc0VqVHVvdS1KdEN5elF4RERCM2xsTlBFX25PbEhPOWpHWHdCSmkzMVNYNDFWTzhEbUdPS1pISlJKOEU3ZW5hN3VrYThvLUVXdGNCZW1LQjZHRlZFQ1RtZ1RzeFNOenhVSzJ5c3dGeDFfZXNVbDJfbnJERjNyZDA?oc=5",
       "description": "Vendaval de mais de 100 km/h assusta moradores de Angra dos Reis e Paraty G1",
-      "image": ""
-    },
-    {
-      "title": "Queda de vegetação interdita a RJ-155, em Angra dos Reis - G1",
-      "link": "https://news.google.com/rss/articles/CBMixgFBVV95cUxON1ZUMjRtQkcwSmF6OEMxUmQ1Y05CVnpwc0h0TzhuZVFleGtQeDZJQ0poSk0zMFNxMlY5Z0FMa3U5RU43TV9uWDhOeFBZdVNhMXRCUktKVnQ0eUZpQm05V2JCOC1maHl0VjlyeXVkX1ZUUnhLM3lQZXFyWFg5OGhwZTVFSk5JWThlbmVfeTdYVktpbkp5Zm1RVmFheENSaWVGTFJGQXRUV1h3Qm0yazJZVnFuUmozWkhJY09md2tFekl0ajNHVEHSAdQBQVVfeXFMUFYtSUVfX2Q0V1k4YXZWcG9vOWF2WnAzQ3lYel9NZWdBMllsdTFtTmVjTXgtT2REWjNDTTNQWjFqWlVJRHRhMGEwWTIzbzVSVk5NT2ljNmUzM3VFd3BfUFZvN1RQb19ubkM2U0VVdE13YWlXVEpLTnV6dmJ4aTFTZ2tJeThUcTNNNGlDbS1jMmU1ZE9kZkY3dEM3cjMxTkhDckJsdUVJVk1mNm1aWllrbEFUOXgxSW9feGVVUjlsODhodmVQSExUWDU4Q3R4cGVicENLQXo?oc=5",
-      "description": "Queda de vegetação interdita a RJ-155, em Angra dos Reis G1",
       "image": ""
     }
   ]

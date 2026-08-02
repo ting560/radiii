@@ -36,7 +36,12 @@ function extractImage(html) {
 async function getRadioInfo() {
     try {
         const res = await fetch(API_URL, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-        const data = await res.json();
+        const buffer = await res.arrayBuffer();
+        let text = new TextDecoder('utf-8').decode(buffer);
+        if (text.indexOf('\uFFFD') !== -1) {
+            text = new TextDecoder('iso-8859-1').decode(buffer);
+        }
+        const data = JSON.parse(text);
         return {
             song: typeof data.musica_atual === 'string' && data.musica_atual.trim() ? decodeEntities(data.musica_atual.trim()) : '',
             listeners: data.ouvintes_conectados || '',

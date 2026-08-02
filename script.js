@@ -212,20 +212,6 @@
             var res = await fetch(DATA_URL + '?_=' + Date.now());
             if (!res.ok) throw new Error('HTTP ' + res.status);
             var data = await res.json();
-            if (data.song && typeof data.song === 'string' && data.song.trim() !== '' && data.song !== currentSong) {
-                applySong(data.song);
-            }
-            if (data.listeners) {
-                var listenersEl = document.getElementById('listenerCount');
-                if (listenersEl) listenersEl.textContent = data.listeners;
-            }
-            if (data.cover) {
-                var coverEl = document.getElementById('albumCover');
-                if (coverEl) {
-                    coverEl.src = data.cover;
-                    coverEl.style.display = 'block';
-                }
-            }
             if (data.news && Array.isArray(data.news) && data.news.length > 0) {
                 newsItems = data.news;
                 renderNewsTicker();
@@ -242,18 +228,47 @@
         fetchRadioData();
     }
 
+    async function fetchApiJson() {
+        var apiRes = await fetch(API_URL + '?_=' + Date.now(), { method: 'GET', headers: { 'Accept': 'application/json' }, mode: 'cors' });
+        if (!apiRes.ok) throw new Error('HTTP ' + apiRes.status);
+        var buffer = await apiRes.arrayBuffer();
+        var text = new TextDecoder('utf-8').decode(buffer);
+        if (text.indexOf('\uFFFD') !== -1) {
+            text = new TextDecoder('iso-8859-1').decode(buffer);
+        }
+        return JSON.parse(text);
+    }
+
+    async function fetchLiveSong() {
+        try {
+            var data = await fetchApiJson();
+            var musicaAtual = data.musica_atual || data.musica || data.currentSong || data.song || data.title || "";
+            if (musicaAtual && typeof musicaAtual === 'string' && musicaAtual.trim() !== '' && musicaAtual !== currentSong) {
+                applySong(musicaAtual);
+            }
+            var listenersEl = document.getElementById('listenerCount');
+            if (listenersEl && data.ouvintes_conectados) {
+                listenersEl.textContent = data.ouvintes_conectados;
+            }
+            var coverEl = document.getElementById('albumCover');
+            if (coverEl && data.capa_musica) {
+                if (coverEl.src !== data.capa_musica) coverEl.src = data.capa_musica;
+                coverEl.style.display = 'block';
+            }
+        } catch (e) {
+            console.warn('API hdradios indispon\u00edvel em tempo real', e);
+        }
+    }
+
     async function fetchCurrentSongFallback() {
         var musicaAtual = "";
         var ouvintes = "";
         var capa = "";
         try {
-            var apiRes = await fetch(API_URL + '?_=' + Date.now(), { method: 'GET', headers: { 'Accept': 'application/json' }, mode: 'cors' });
-            if (apiRes.ok) {
-                var apiData = await apiRes.json();
-                musicaAtual = apiData.musica_atual || apiData.musica || apiData.currentSong || apiData.song || apiData.title || "";
-                ouvintes = apiData.ouvintes_conectados || "";
-                capa = apiData.capa_musica || "";
-            }
+            var apiData = await fetchApiJson();
+            musicaAtual = apiData.musica_atual || apiData.musica || apiData.currentSong || apiData.song || apiData.title || "";
+            ouvintes = apiData.ouvintes_conectados || "";
+            capa = apiData.capa_musica || "";
         } catch (e) {
             console.warn("API hdradios indispon\u00edvel, tentando Shoutcast /7.html");
         }
@@ -909,6 +924,8 @@
 
         // Fetch data
         fetchWeather();
+        fetchLiveSong();
+        setInterval(fetchLiveSong, 5000);
         fetchRadioData();
         setInterval(fetchWeather, 600000);
         if (!dataUpdateInterval) {
