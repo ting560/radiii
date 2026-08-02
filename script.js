@@ -3,6 +3,7 @@
 
     const STREAM_URL = "https://sv15.hdradios.net:8914/stream";
     const API_URL = "https://painel.hdradios.net/api-json/VkRCU2NtVkZOVUpRVkRBOStS";
+    const CURRENT_SONG_URL = "https://player.hdradios.net/proxy-cors/8914/currentsong/https://sv15.hdradios.net:8914/currentsong?sid=1";
     const RSS_URL = "https://news.google.com/rss/search?q=Angra+dos+Reis&hl=pt-BR&gl=BR&ceid=BR:pt-BR";
     const PLACEHOLDER_IMG = 'https://z-cdn-media.chatglm.cn/files/eb57e8a7-8c37-4c67-9360-a6955a9a7495.png?auth_key=1872979742-b9c0fa04281e42cd9758535b515671cb-0-24c3f66193992b40a4ff51135bf319a4';
 
@@ -241,11 +242,25 @@
 
     async function fetchLiveSong() {
         try {
-            var data = await fetchApiJson();
-            var musicaAtual = data.musica_atual || data.musica || data.currentSong || data.song || data.title || "";
-            if (musicaAtual && typeof musicaAtual === 'string' && musicaAtual.trim() !== '' && musicaAtual !== currentSong) {
+            var res = await fetch(CURRENT_SONG_URL + '?_=' + Date.now(), { mode: 'cors' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            var buffer = await res.arrayBuffer();
+            var text = new TextDecoder('utf-8').decode(buffer);
+            if (text.indexOf('\uFFFD') !== -1) {
+                text = new TextDecoder('iso-8859-1').decode(buffer);
+            }
+            var musicaAtual = text.replace(/\s+/g, ' ').trim();
+            if (musicaAtual && musicaAtual !== '-' && musicaAtual !== '' && musicaAtual !== currentSong) {
                 applySong(musicaAtual);
             }
+        } catch (e) {
+            console.warn('Falha ao buscar musica ao vivo', e);
+        }
+    }
+
+    async function fetchLiveInfo() {
+        try {
+            var data = await fetchApiJson();
             var listenersEl = document.getElementById('listenerCount');
             if (listenersEl && data.ouvintes_conectados) {
                 listenersEl.textContent = data.ouvintes_conectados;
@@ -256,7 +271,7 @@
                 coverEl.style.display = 'block';
             }
         } catch (e) {
-            console.warn('API hdradios indispon\u00edvel em tempo real', e);
+            console.warn('API hdradios indispon\u00edvel', e);
         }
     }
 
@@ -925,7 +940,9 @@
         // Fetch data
         fetchWeather();
         fetchLiveSong();
-        setInterval(fetchLiveSong, 5000);
+        setInterval(fetchLiveSong, 3000);
+        fetchLiveInfo();
+        setInterval(fetchLiveInfo, 60000);
         fetchRadioData();
         setInterval(fetchWeather, 600000);
         if (!dataUpdateInterval) {
