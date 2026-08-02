@@ -265,11 +265,6 @@
             if (listenersEl && data.ouvintes_conectados) {
                 listenersEl.textContent = data.ouvintes_conectados;
             }
-            var coverEl = document.getElementById('albumCover');
-            if (coverEl && data.capa_musica) {
-                if (coverEl.src !== data.capa_musica) coverEl.src = data.capa_musica;
-                coverEl.style.display = 'block';
-            }
         } catch (e) {
             console.warn('API hdradios indispon\u00edvel', e);
         }
@@ -278,12 +273,10 @@
     async function fetchCurrentSongFallback() {
         var musicaAtual = "";
         var ouvintes = "";
-        var capa = "";
         try {
             var apiData = await fetchApiJson();
             musicaAtual = apiData.musica_atual || apiData.musica || apiData.currentSong || apiData.song || apiData.title || "";
             ouvintes = apiData.ouvintes_conectados || "";
-            capa = apiData.capa_musica || "";
         } catch (e) {
             console.warn("API hdradios indispon\u00edvel, tentando Shoutcast /7.html");
         }
@@ -313,13 +306,6 @@
         if (ouvintes) {
             var listenersEl = document.getElementById('listenerCount');
             if (listenersEl) listenersEl.textContent = ouvintes;
-        }
-        if (capa) {
-            var coverEl = document.getElementById('albumCover');
-            if (coverEl) {
-                coverEl.src = capa;
-                coverEl.style.display = 'block';
-            }
         }
 
         if (musicaAtual && typeof musicaAtual === 'string' && musicaAtual.trim() !== '' && musicaAtual !== currentSong) {

@@ -374,16 +374,6 @@ body {
     min-height: 60px
 }
 
-.album-cover {
-    width: 110px;
-    height: 110px;
-    border-radius: 16px;
-    object-fit: cover;
-    margin: 0 auto 14px auto;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-    border: 1px solid var(--glass-border)
-}
-
 .song-title {
     font-size: 1.3rem;
     font-weight: 700;
