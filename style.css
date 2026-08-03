@@ -1530,3 +1530,11 @@ tr.sch-now td:first-child {
     from { bottom: 70px; opacity: 1 }
     to { bottom: 60px; opacity: 0 }
 }
+
+/* Bloqueia anúncios do AdSense (auto ads) antes ou dentro do player */
+#playerWrapper .google-auto-placed,
+#playerWrapper .adsbygoogle,
+.google-auto-placed:has(~ #playerWrapper),
+.adsbygoogle:has(~ #playerWrapper) {
+    display: none !important;
+}

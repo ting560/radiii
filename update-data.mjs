@@ -103,7 +103,8 @@ async function main() {
 
     const info = await getRadioInfo();
     const song = info.song || old.song || '';
-    const news = (await getNews()).length > 0 ? await getNews() : old.news;
+    const fetchedNews = await getNews();
+    const news = fetchedNews.length > 0 ? fetchedNews : old.news;
 
     const data = {
         updated_at: new Date().toISOString(),

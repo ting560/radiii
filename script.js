@@ -7,6 +7,24 @@
     const RSS_URL = "https://news.google.com/rss/search?q=Angra+dos+Reis&hl=pt-BR&gl=BR&ceid=BR:pt-BR";
     const PLACEHOLDER_IMG = 'https://z-cdn-media.chatglm.cn/files/eb57e8a7-8c37-4c67-9360-a6955a9a7495.png?auth_key=1872979742-b9c0fa04281e42cd9758535b515671cb-0-24c3f66193992b40a4ff51135bf319a4';
 
+    let newsItems = [];
+    let weatherData = null;
+    let currentSong = "";
+    let songUpdateInterval = null;
+    let isPlaying = false;
+    let songHistory = [];
+    let carouselIndex = 0;
+    let carouselTimer = null;
+    let audioCtx = null;
+    let analyser = null;
+    let source = null;
+    let dataArray = null;
+    let visualizerReady = false;
+    let showOpenOnly = false;
+    let lastVolume = 0.8;
+    let dataUpdateInterval = null;
+    let lastWaitingToast = 0;
+
     const audioPlayer = new Audio(STREAM_URL);
     audioPlayer.crossOrigin = "anonymous";
     audioPlayer.preload = "auto";
@@ -25,24 +43,6 @@
             showToast('Carregando transmiss\u00e3o...');
         }
     });
-
-    let newsItems = [];
-    let weatherData = null;
-    let currentSong = "";
-    let songUpdateInterval = null;
-    let isPlaying = false;
-    let songHistory = [];
-    let carouselIndex = 0;
-    let carouselTimer = null;
-    let audioCtx = null;
-    let analyser = null;
-    let source = null;
-    let dataArray = null;
-    let visualizerReady = false;
-    let showOpenOnly = false;
-    let lastVolume = 0.8;
-    let dataUpdateInterval = null;
-    let lastWaitingToast = 0;
 
     const topHeader = document.getElementById('topHeader');
     const fixedPlayer = document.getElementById('fixedPlayer');
@@ -859,6 +859,22 @@
         }
     }
 
+    // PROTEGE O PLAYER DE ANÚNCIOS DO ADSENSE (auto ads)
+    function protectPlayerFromAds() {
+        var player = document.getElementById('playerWrapper');
+        if (!player) return;
+        var nodes = document.querySelectorAll('.google-auto-placed, .adsbygoogle');
+        for (var i = 0; i < nodes.length; i++) {
+            var node = nodes[i];
+            var pos = player.compareDocumentPosition(node);
+            var isInside = (pos & Node.DOCUMENT_POSITION_CONTAINED_BY) !== 0;
+            var isBefore = (pos & Node.DOCUMENT_POSITION_PRECEDING) !== 0;
+            if (isInside || isBefore) {
+                node.style.display = 'none';
+            }
+        }
+    }
+
     // INIT
     function init() {
         // Schedule tabs
@@ -964,6 +980,12 @@
         setInterval(fetchWeather, 600000);
         if (!dataUpdateInterval) {
             dataUpdateInterval = setInterval(fetchRadioData, 60000);
+        }
+
+        // Garante que anúncios do AdSense não entrem antes ou dentro do player
+        protectPlayerFromAds();
+        if (window.MutationObserver) {
+            new MutationObserver(protectPlayerFromAds).observe(document.body, { childList: true, subtree: true });
         }
 
         // Sincroniza o volume do player com o slider
