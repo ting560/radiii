@@ -632,7 +632,7 @@ input[type=range]::-webkit-slider-runnable-track {
 }
 
 #anuncios h2 {
-    font-size: .85rem;
+   
     color: #888;
     margin-bottom: 12px;
     text-transform: uppercase;
