@@ -1067,8 +1067,8 @@ input[type=range]::-webkit-slider-runnable-track {
 }
 
 .news-carousel-section {
- width: 100%;
-    max-width: 800px;
+    width: 100%;
+    max-width: 500px;
     margin-bottom: 25px;
     border-radius: 20px;
     overflow: hidden;
