@@ -623,8 +623,6 @@ input[type=range]::-webkit-slider-runnable-track {
 
 #anuncios {
     width: 100%;
-    max-width: 400px;
-    
     border-radius: 20px;
     padding: 15px;
     margin-bottom: 25px;
