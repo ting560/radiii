@@ -134,10 +134,13 @@
             </div>
         </div>
         <div id="pharmacyBody" style="display:none">
-            <div style="text-align:center;margin-bottom:12px">
-                <button id="pharmacyFilterBtn" style="background:var(--primary-color);color:#000;border:none;padding:8px 20px;border-radius:20px;font-weight:700;font-size:.8rem;cursor:pointer;transition:all .3s;display:inline-flex;align-items:center;gap:8px">
-                    <i class="fas fa-filter"></i> Mostrar só abertas
-                </button>
+            <div style="margin-bottom:12px;display:flex;flex-direction:column;gap:8px">
+                <input type="text" id="pharmacySearch" placeholder="🔍 Buscar por nome ou bairro..." style="width:100%;padding:10px 14px;border-radius:12px;border:1px solid var(--glass-border);background:rgba(255,255,255,0.05);color:#fff;font-size:.85rem;outline:none;">
+                <div style="text-align:center">
+                    <button id="pharmacyFilterBtn" style="background:var(--primary-color);color:#000;border:none;padding:8px 20px;border-radius:20px;font-weight:700;font-size:.8rem;cursor:pointer;transition:all .3s;display:inline-flex;align-items:center;gap:8px">
+                        <i class="fas fa-filter"></i> Mostrar só abertas
+                    </button>
+                </div>
             </div>
             <div class="pharmacy-list" id="pharmacyList"></div>
             <div class="pharmacy-map">
@@ -156,27 +159,36 @@
     <!-- ANÚNCIOS -->
     <section class="section" id="anuncios">
         <h2>Nossos Parceiros</h2>
-        <div class="ads-slider-wrapper">
-            <button class="slider-btn" id="prevSlide" aria-label="Anúncio anterior">&#10094;</button>
-            <div class="ads-slider-container" id="sliderContainer">
-                <a href="https://www.instagram.com/restaurantecantinhodaval/" target="_blank"
-                    class="ads-slider-item active" data-g="val">
-                    <div class="ad-card"><div class="ad-badge">V</div><div class="ad-name">Cantinho da Val</div><div class="ad-tag">Restaurante</div></div>
-                </a>
-                <a href="https://sourjnet.com.br/" target="_blank" class="ads-slider-item" data-g="sourj">
-                    <div class="ad-card"><div class="ad-badge">S</div><div class="ad-name">Sourj Net</div><div class="ad-tag">Provedor de Internet</div></div>
-                </a>
-                <a href="https://www.instagram.com/lojasnalin/" target="_blank" class="ads-slider-item" data-g="nalin">
-                    <div class="ad-card"><div class="ad-badge">N</div><div class="ad-name">Lojas Nalin</div><div class="ad-tag">Lojas</div></div>
-                </a>
-                <a href="https://www.facebook.com/casagloborj/" target="_blank" class="ads-slider-item" data-g="globo">
-                    <div class="ad-card"><div class="ad-badge">G</div><div class="ad-name">Casa Globo</div><div class="ad-tag">Parceiro</div></div>
-                </a>
-                <a href="https://www.instagram.com/gipoiaescolanautica/" target="_blank" class="ads-slider-item" data-g="gipoia">
-                    <div class="ad-card"><div class="ad-badge">G</div><div class="ad-name">Gipoia Escola Náutica</div><div class="ad-tag">Escola Náutica</div></div>
-                </a>
-            </div>
-            <button class="slider-btn" id="nextSlide" aria-label="Próximo anúncio">&#10095;</button>
+        <div class="partners-banner">
+            <a class="partner-tile" href="https://www.instagram.com/restaurantecantinhodaval/" target="_blank" rel="noopener"
+                title="Cantinho da Val">
+                <img src="logos/cantinho-da-val.jpg" alt="Cantinho da Val">
+                <span class="partner-name">Cantinho da Val</span>
+                <span class="partner-tag">Restaurante</span>
+            </a>
+            <a class="partner-tile" href="https://sourjnet.com.br/" target="_blank" rel="noopener" title="Sourj Net">
+                <img src="logos/sourj-net.jpg" alt="Sourj Net">
+                <span class="partner-name">Sourj Net</span>
+                <span class="partner-tag">Provedor de Internet</span>
+            </a>
+            <a class="partner-tile" href="https://www.instagram.com/lojasnalin/" target="_blank" rel="noopener"
+                title="Lojas Nalin">
+                <img src="logos/lojas-nalin.svg" alt="Lojas Nalin">
+                <span class="partner-name">Lojas Nalin</span>
+                <span class="partner-tag">Lojas</span>
+            </a>
+            <a class="partner-tile" href="https://www.facebook.com/casagloborj/" target="_blank" rel="noopener"
+                title="Casa Globo">
+                <img src="logos/casa-globo.jpg" alt="Casa Globo">
+                <span class="partner-name">Casa Globo</span>
+                <span class="partner-tag">Náutica e Camping</span>
+            </a>
+            <a class="partner-tile" href="https://www.instagram.com/gipoiaescolanautica/" target="_blank" rel="noopener"
+                title="Gipoia Escola Náutica">
+                <img src="logos/gipoia-escola-nautica.jpg" alt="Gipoia Escola Náutica">
+                <span class="partner-name">Gipoia Escola Náutica</span>
+                <span class="partner-tag">Escola Náutica</span>
+            </a>
         </div>
     </section>
 

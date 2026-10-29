@@ -21,6 +21,7 @@
     let dataArray = null;
     let visualizerReady = false;
     let showOpenOnly = false;
+    let pharmacySearchQuery = "";
     let lastVolume = 0.8;
     let dataUpdateInterval = null;
     let lastWaitingToast = 0;
@@ -217,6 +218,10 @@
                 newsItems = data.news;
                 renderNewsTicker();
                 renderCarousel();
+            }
+            if (data.pharmacies && Array.isArray(data.pharmacies) && data.pharmacies.length > 0) {
+                pharmacyData = data.pharmacies;
+                renderPharmacies();
             }
         } catch (e) {
             console.warn('data.json indispon\u00edvel, usando fallback direto:', e);
@@ -639,11 +644,20 @@
         var list = document.getElementById('pharmacyList');
         var hasAnyOpen = false;
         var html = '';
+        var query = (pharmacySearchQuery || '').toLowerCase().trim();
+
         for (var i = 0; i < pharmacyData.length; i++) {
             var p = pharmacyData[i];
             var isOpen = getPharmacyStatus(p);
             if (isOpen) hasAnyOpen = true;
             if (showOpenOnly && !isOpen) continue;
+
+            if (query) {
+                var matchName = (p.name || '').toLowerCase().indexOf(query) !== -1;
+                var matchAddr = (p.addr || '').toLowerCase().indexOf(query) !== -1;
+                if (!matchName && !matchAddr) continue;
+            }
+
             var statusClass = isOpen ? 'open-now' : 'closed-now';
             var statusText = isOpen ? 'Aberto' : 'Fechado';
             var safeName = escapeHtml(p.name);
@@ -651,17 +665,20 @@
             var safePhone = escapeHtml(p.phone);
             var badgeHtml = p.badge ? ' <span class="p-badge p-' + (p.badge === '24h' ? '24h' : '22h') + '">' + escapeHtml(p.badge) + '</span>' : '';
             var encodedSearch = encodeURIComponent(p.name + ' ' + p.addr + ' Angra dos Reis');
-            html += '<div class="pharmacy-item" onclick="window.open(\'https://www.google.com/maps/search/' + encodedSearch + '\',\'_blank\')">' +
-                '<div class="p-icon"><i class="fas fa-medkit"></i></div>' +
-                '<div class="p-info">' +
+            var cleanPhone = p.phone ? p.phone.replace(/\D/g, '') : '';
+            var phoneLink = cleanPhone ? 'tel:55' + cleanPhone : '#';
+
+            html += '<div class="pharmacy-item">' +
+                '<div class="p-icon" onclick="window.open(\'https://www.google.com/maps/search/' + encodedSearch + '\',\'_blank\')" title="Ver no Mapa"><i class="fas fa-medkit"></i></div>' +
+                '<div class="p-info" onclick="window.open(\'https://www.google.com/maps/search/' + encodedSearch + '\',\'_blank\')" title="Ver no Mapa">' +
                 '<div class="p-name">' + safeName + badgeHtml + '</div>' +
                 '<div class="p-address"><i class="fas fa-map-marker-alt" style="color:var(--primary-color);font-size:.6rem"></i> ' + safeAddr + '</div>' +
-                '<div class="p-phone"><i class="fas fa-phone"></i> ' + safePhone + '</div>' +
+                '<div class="p-phone"><a href="' + phoneLink + '" onclick="event.stopPropagation();" style="color:var(--primary-color);text-decoration:none"><i class="fas fa-phone"></i> ' + safePhone + '</a></div>' +
                 '</div>' +
                 '<span class="p-status ' + statusClass + '">' + statusText + '</span>' +
                 '</div>';
         }
-        list.innerHTML = html || '<div style="text-align:center;padding:20px;color:#888"><i class="fas fa-info-circle"></i> Nenhuma farm\u00e1cia aberta no momento.</div>';
+        list.innerHTML = html || '<div style="text-align:center;padding:20px;color:#888"><i class="fas fa-info-circle"></i> Nenhuma farm\u00e1cia encontrada.</div>';
         var statusEl = document.getElementById('pharmacyGeneralStatus');
         if (hasAnyOpen) {
             statusEl.textContent = 'Abertas agora';
@@ -681,43 +698,6 @@
     }
 
     // AD SLIDER
-    function initAdSlider() {
-        var sliderContainer = document.getElementById('sliderContainer');
-        var slides = sliderContainer.querySelectorAll('.ads-slider-item');
-        var prevBtn = document.getElementById('prevSlide');
-        var nextBtn = document.getElementById('nextSlide');
-        var currentIndex = 0;
-        var autoSlideInterval;
-
-        function showSlide(index) {
-            if (index < 0) index = slides.length - 1;
-            if (index >= slides.length) index = 0;
-            for (var i = 0; i < slides.length; i++) {
-                slides[i].classList.remove('active');
-            }
-            slides[index].classList.add('active');
-            currentIndex = index;
-        }
-
-        function nextSlideFn() { showSlide(currentIndex + 1); resetAutoSlide(); }
-        function prevSlideFn() { showSlide(currentIndex - 1); resetAutoSlide(); }
-
-        function startAutoSlide() {
-            autoSlideInterval = setInterval(function () { showSlide(currentIndex + 1); }, 5000);
-        }
-
-        function resetAutoSlide() {
-            clearInterval(autoSlideInterval);
-            startAutoSlide();
-        }
-
-        prevBtn.addEventListener('click', prevSlideFn);
-        nextBtn.addEventListener('click', nextSlideFn);
-        startAutoSlide();
-        sliderContainer.addEventListener('mouseenter', function () { clearInterval(autoSlideInterval); });
-        sliderContainer.addEventListener('mouseleave', startAutoSlide);
-    }
-
     // TICKER NEWS CLICK
     function initTickerClick() {
         document.getElementById('newsTickerContent').addEventListener('click', function (e) {
@@ -952,6 +932,14 @@
             renderPharmacies();
         });
 
+        var searchInput = document.getElementById('pharmacySearch');
+        if (searchInput) {
+            searchInput.addEventListener('input', function (e) {
+                pharmacySearchQuery = e.target.value;
+                renderPharmacies();
+            });
+        }
+
         // Initial renders
         currentScheduleDay = getTodayKey();
         var tabs = document.querySelectorAll('.sch-tab');
@@ -966,9 +954,6 @@
         }, 60000);
         renderPharmacies();
         setInterval(renderPharmacies, 60000);
-
-        // Ad slider
-        initAdSlider();
 
         // Fetch data
         fetchWeather();

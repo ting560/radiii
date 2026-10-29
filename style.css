@@ -641,6 +641,61 @@ input[type=range]::-webkit-slider-runnable-track {
     letter-spacing: 1px
 }
 
+.partners-banner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center
+}
+
+.partner-tile {
+    flex: 1 1 105px;
+    max-width: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 6px 10px;
+    background: #f5f6f8;
+    border: 1px solid rgba(0, 0, 0, .06);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform .2s ease, box-shadow .2s ease
+}
+
+.partner-tile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, .12)
+}
+
+.partner-tile img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    border-radius: 8px
+}
+
+.partner-name {
+    font-size: .62rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    color: #444
+}
+
+.partner-tag {
+    font-size: .55rem;
+    line-height: 1.2;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    color: #999;
+    margin-top: -3px
+}
+
 .ads-slider-wrapper {
     position: relative;
     display: flex;
@@ -652,7 +707,7 @@ input[type=range]::-webkit-slider-runnable-track {
     flex: 1;
     overflow: hidden;
     border-radius: 12px;
-    min-height: 120px;
+    height: 148px;
     display: flex;
     align-items: center;
     justify-content: center
@@ -716,6 +771,29 @@ input[type=range]::-webkit-slider-runnable-track {
     letter-spacing: .5px;
     text-transform: uppercase;
     opacity: .85
+}
+
+.ad-card-photo {
+    flex-direction: row;
+    gap: 14px;
+    padding: 16px
+}
+
+.ad-photo {
+    width: 88px;
+    height: 88px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, .5);
+    flex-shrink: 0
+}
+
+.ad-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    text-align: left
 }
 
 .ads-slider-item[data-g="val"] .ad-card {
