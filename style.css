@@ -13,7 +13,9 @@
     --popup-accent-light: #ffb347
 }
 
-html { scroll-behavior: smooth }
+html {
+    scroll-behavior: smooth
+}
 
 * {
     margin: 0;
@@ -103,23 +105,53 @@ body {
 }
 
 @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(30px) }
-    to { opacity: 1; transform: translateY(0) }
+    from {
+        opacity: 0;
+        transform: translateY(30px)
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0)
+    }
 }
 
 @keyframes fadeInScale {
-    from { opacity: 0; transform: scale(0.9) }
-    to { opacity: 1; transform: scale(1) }
+    from {
+        opacity: 0;
+        transform: scale(0.9)
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1)
+    }
 }
 
 @keyframes pulseRed {
-    0%, 100% { transform: scale(1); opacity: 1 }
-    50% { transform: scale(1.05); opacity: .8 }
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1
+    }
+
+    50% {
+        transform: scale(1.05);
+        opacity: .8
+    }
 }
 
 @keyframes rippleEffect {
-    0% { transform: scale(0); opacity: 1 }
-    100% { transform: scale(2); opacity: 0 }
+    0% {
+        transform: scale(0);
+        opacity: 1
+    }
+
+    100% {
+        transform: scale(2);
+        opacity: 0
+    }
 }
 
 .visualizer-container {
@@ -623,6 +655,8 @@ input[type=range]::-webkit-slider-runnable-track {
 
 #anuncios {
     width: 100%;
+    max-width: 400px;
+    background: #ffffff;
     border-radius: 20px;
     padding: 15px;
     margin-bottom: 25px;
@@ -632,7 +666,7 @@ input[type=range]::-webkit-slider-runnable-track {
 }
 
 #anuncios h2 {
-   
+    font-size: .85rem;
     color: #888;
     margin-bottom: 12px;
     text-transform: uppercase;
@@ -644,6 +678,16 @@ input[type=range]::-webkit-slider-runnable-track {
     flex-wrap: wrap;
     gap: 10px;
     justify-content: center
+}
+
+@keyframes partnerFloat {
+    0%, 100% {
+        transform: translateY(0)
+    }
+
+    50% {
+        transform: translateY(-7px)
+    }
 }
 
 .partner-tile {
@@ -659,12 +703,30 @@ input[type=range]::-webkit-slider-runnable-track {
     border-radius: 12px;
     text-decoration: none;
     color: inherit;
-    transition: transform .2s ease, box-shadow .2s ease
+    animation: partnerFloat 3.2s ease-in-out infinite;
+    transition: background .25s ease, border-color .25s ease, box-shadow .25s ease
+}
+
+.partner-tile:nth-child(2) {
+    animation-delay: -.6s
+}
+
+.partner-tile:nth-child(3) {
+    animation-delay: -1.2s
+}
+
+.partner-tile:nth-child(4) {
+    animation-delay: -1.8s
+}
+
+.partner-tile:nth-child(5) {
+    animation-delay: -2.4s
 }
 
 .partner-tile:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(0, 0, 0, .12)
+    background: #fff;
+    border-color: var(--primary-color);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, .14)
 }
 
 .partner-tile img {
@@ -692,6 +754,12 @@ input[type=range]::-webkit-slider-runnable-track {
     letter-spacing: .4px;
     color: #999;
     margin-top: -3px
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .partner-tile {
+        animation: none
+    }
 }
 
 .ads-slider-wrapper {
@@ -895,8 +963,13 @@ input[type=range]::-webkit-slider-runnable-track {
 }
 
 @keyframes ticker-scroll {
-    0% { transform: translateX(0) }
-    100% { transform: translateX(-100%) }
+    0% {
+        transform: translateX(0)
+    }
+
+    100% {
+        transform: translateX(-100%)
+    }
 }
 
 .modal-overlay {
@@ -1073,7 +1146,9 @@ input[type=range]::-webkit-slider-runnable-track {
     border-radius: 20px;
     overflow: hidden;
     background: rgba(20, 20, 20, 0.6);
-    backdrop-filter: blur(20px)
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    animation: fadeInUp 1s ease-out .3s backwards
 }
 
 .news-carousel-header {
@@ -1596,13 +1671,27 @@ tr.sch-now td:first-child {
 }
 
 @keyframes fadein {
-    from { bottom: 60px; opacity: 0 }
-    to { bottom: 70px; opacity: 1 }
+    from {
+        bottom: 60px;
+        opacity: 0
+    }
+
+    to {
+        bottom: 70px;
+        opacity: 1
+    }
 }
 
 @keyframes fadeout {
-    from { bottom: 70px; opacity: 1 }
-    to { bottom: 60px; opacity: 0 }
+    from {
+        bottom: 70px;
+        opacity: 1
+    }
+
+    to {
+        bottom: 60px;
+        opacity: 0
+    }
 }
 
 /* Bloqueia anúncios do AdSense (auto ads) antes ou dentro do player */
