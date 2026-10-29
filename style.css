@@ -1067,16 +1067,13 @@ input[type=range]::-webkit-slider-runnable-track {
 }
 
 .news-carousel-section {
-    width: 100%;
+ width: 100%;
+    max-width: 800px;
     margin-bottom: 25px;
-    padding: 0 16px;              /* respiro nas laterais em mobile */
-    box-sizing: border-box;       /* padding não estoura a largura */
     border-radius: 20px;
     overflow: hidden;
     background: rgba(20, 20, 20, 0.6);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-    animation: fadeInUp 1s ease-out .3s backwards;
+    backdrop-filter: blur(20px)
 }
 
 .news-carousel-header {
